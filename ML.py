@@ -97,5 +97,10 @@ class KNNModel():
       def get_model(self):
           return self.model
 
+      def get_k(self):
+        return self.K
+
+
+
 
 
