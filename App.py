@@ -2,8 +2,11 @@ from flask import Flask
 from flask import request
 import pickle
 from ML import LogisticModel,KNNModel
+from flask_pymongo import PyMongo
+from bson.binary import Binary
 
 app = Flask(__name__)
+mongo = PyMongo(app)
 
 
 # Define end point
@@ -38,9 +41,13 @@ def trainLogisticModel():
     urlx=request.args.get('urlx')
     urly=request.args.get('urly')
     lm=LogisticModel(urlx,urly)
-    pickle.dump(lm.get_model(), open('logReg.pkl', 'wb'))
+
+    theModel = pickle.dump(lm.get_model(), open('logReg.pkl', 'wb'))
     pickle.dump(lm.get_attributes(),open('num_attributes','wb'))
     pickle.dump(lm.get_classes(),open('num_classes','wb'))
+
+    model = mongo.db.model
+    model.insert({'Type':'Logistic Regression','model':theModel})
     return "Logistic Regression Model trained !"
 
 
